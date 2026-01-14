@@ -13,7 +13,7 @@
     "subagents"
   ],
   "baseDirs": [
-    "."
+    "./out"
   ],
   "delete": true,
   "verbose": false,
