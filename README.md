@@ -17,9 +17,7 @@ All configurations are written once in the `.rulesync/` directory and automatica
 
 - **Node.js** and **npm** (for running `rulesync`)
 - **GNU Stow** (for symlink management)
-  - macOS: `brew install stow`
-  - Linux: `sudo apt-get install stow` or equivalent
-  - Windows: Use WSL or install via package manager
+  - Install via Homebrew: `brew install stow`
 
 ## Installation
 
@@ -197,7 +195,3 @@ When adding new configurations:
 2. Test your changes by running `./sync.sh`
 3. Verify the generated output in `out/`
 4. Commit your changes
-
-## License
-
-[Add your license here]
