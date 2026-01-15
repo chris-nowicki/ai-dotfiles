@@ -1,4 +1,4 @@
-# AI Tools
+# AI Tooling
 
 A centralized repository for managing AI coding assistant configurations across multiple tools (Cursor, GitHub Copilot, Claude Code, Codex CLI, and OpenCode) using [rulesync](https://github.com/oraios/rulesync) and GNU Stow for symlink management.
 
