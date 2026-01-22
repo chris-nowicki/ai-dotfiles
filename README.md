@@ -205,6 +205,13 @@ After changing `rulesync.jsonc`, run `./sync.sh` to apply your changes.
 
 ## Adding Your Own Configurations
 
+Each configuration file has a `targets` field in its frontmatter that controls which AI tools receive it:
+
+- `targets: ["*"]` — Send to **all tools** in your `rulesync.jsonc` config
+- `targets: ["cursor", "claudecode"]` — Send **only to these specific tools**
+
+This lets you have universal configs and tool-specific ones. For example, if a feature only works in Cursor, set `targets: ["cursor"]` so it doesn't get sent to other tools.
+
 ### Rules
 
 Rules are coding guidelines the AI will follow. Create a markdown file in `.rulesync/rules/`:
