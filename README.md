@@ -34,7 +34,7 @@ brew install stow
 
 ```bash
 git clone <repository-url>
-cd AI-Tools
+cd ai-dotfiles
 chmod +x sync.sh
 ```
 
@@ -52,7 +52,7 @@ That's it! Your AI configurations are now available to all projects on your mach
 flowchart LR
     subgraph global [GLOBAL Mode]
         direction TB
-        G_REPO["AI-Tools repo"]
+        G_REPO["ai-dotfiles repo"]
         G_RS[".rulesync/"]
         G_GEN["rulesync generate"]
         G_OUT["out/"]
@@ -317,7 +317,7 @@ The generated files (`.cursor/`, `CLAUDE.md`, etc.) will be created in your proj
 ## Repository Structure
 
 ```
-AI-Tools/
+ai-dotfiles/
 ├── .rulesync/              # Your source configs (edit these!)
 │   ├── rules/              # Coding guidelines
 │   ├── commands/           # Custom commands
