@@ -16,32 +16,43 @@ All configurations are written once in the `.rulesync/` directory and automatica
 
 ## How It Works
 
-This repository uses rulesync in **GLOBAL mode** with GNU Stow to make AI configurations available to all projects on your machine. There are two ways to use rulesync:
+This repository uses rulesync in **GLOBAL mode** with GNU Stow to make AI configurations available to all projects on your machine. Alternatively, you can use **Project-Based mode** to keep configurations within a specific project.
 
 ```mermaid
-flowchart TB
-    subgraph source [Source Files]
-        RS[.rulesync/]
-        RS --> Rules[rules/]
-        RS --> Commands[commands/]
-        RS --> Subagents[subagents/]
-        RS --> Skills[skills/]
-    end
+flowchart LR
+    subgraph global [GLOBAL Mode]
+        direction TB
+        G_REPO["AI-Tools repo"]
+        G_RS[".rulesync/"]
+        G_GEN["rulesync generate"]
+        G_OUT["out/"]
+        G_STOW["stow -t ~ out"]
+        G_HOME["~/.cursor/"]
+        G_ALL["All projects on machine"]
 
-    subgraph global [GLOBAL Mode - This Repo]
-        G1[rulesync generate] --> OUT[out/]
-        OUT --> STOW[stow -t ~ out]
-        STOW --> HOME["~/.cursor/, ~/.opencode/"]
-        HOME --> ALL[Available to ALL projects]
+        G_REPO --> G_RS
+        G_RS --> G_GEN
+        G_GEN --> G_OUT
+        G_OUT --> G_STOW
+        G_STOW --> G_HOME
+        G_HOME --> G_ALL
     end
 
     subgraph project [Project-Based Mode]
-        P1[rulesync generate] --> PROJ[.cursor/, .opencode/]
-        PROJ --> REPO[Stays in project repo]
-    end
+        direction TB
+        P_REPO["Your project repo"]
+        P_INIT["npx rulesync init"]
+        P_RS[".rulesync/"]
+        P_GEN["rulesync generate"]
+        P_OUT[".cursor/"]
+        P_STAY["Committed to repo"]
 
-    RS --> G1
-    RS --> P1
+        P_REPO --> P_INIT
+        P_INIT --> P_RS
+        P_RS --> P_GEN
+        P_GEN --> P_OUT
+        P_OUT --> P_STAY
+    end
 ```
 
 ### GLOBAL Mode (This Repository)
