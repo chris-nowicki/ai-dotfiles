@@ -16,10 +16,5 @@
   "baseDirs": [
     "./out"
   ],
-  "delete": true,
-  "verbose": false,
-  "global": false,
-  "simulateCommands": false,
-  "simulateSubagents": false,
-  "modularMcp": false
+  "delete": true
 }
