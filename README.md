@@ -119,6 +119,90 @@ After editing any files in `.rulesync/`, run:
 
 This regenerates all configs and updates the shortcuts.
 
+## Customizing Your Setup
+
+The `rulesync.jsonc` file controls which AI tools and features are synced. Open it to customize:
+
+### Adding or Removing AI Tools
+
+The `targets` array controls which AI tools receive your configurations:
+
+```json
+{
+  "targets": [
+    "cursor",      // Cursor editor
+    "claudecode",  // Claude Code
+    "opencode"     // OpenCode
+  ]
+}
+```
+
+**Want to add GitHub Copilot?** Add `"copilot"` to the array:
+
+```json
+{
+  "targets": [
+    "cursor",
+    "claudecode",
+    "opencode",
+    "copilot"
+  ]
+}
+```
+
+**Only using Cursor?** Remove the others:
+
+```json
+{
+  "targets": [
+    "cursor"
+  ]
+}
+```
+
+Available targets: `cursor`, `claudecode`, `opencode`, `copilot`, `codexcli`, `geminicli`, `cline`, `kilocode`, `roocode`
+
+### Enabling or Disabling Features
+
+The `features` array controls what types of configurations are generated:
+
+```json
+{
+  "features": [
+    "rules",      // Coding guidelines
+    "commands",   // Custom slash commands
+    "subagents",  // Specialized AI agents
+    "skills",     // Reusable instructions
+    "ignore",     // .aiignore patterns
+    "mcp"         // External tool connections
+  ]
+}
+```
+
+**Don't use subagents?** Remove it:
+
+```json
+{
+  "features": [
+    "rules",
+    "commands",
+    "skills"
+  ]
+}
+```
+
+**Only want rules?** Keep just that:
+
+```json
+{
+  "features": [
+    "rules"
+  ]
+}
+```
+
+After changing `rulesync.jsonc`, run `./sync.sh` to apply your changes.
+
 ## Adding Your Own Configurations
 
 ### Rules
