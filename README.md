@@ -57,6 +57,45 @@ flowchart TB
 - **Generate**: `rulesync generate` with `baseDirs: ["."]` outputs directly to the project
 - **Result**: Configurations stay in the project and are committed to the repo
 
+#### Setting Up Project-Based Mode
+
+To add rulesync configurations to a specific project repository:
+
+1. Navigate to your project directory:
+   ```bash
+   cd /path/to/your/project
+   ```
+
+2. Initialize rulesync (creates `.rulesync/` directory and sample files):
+   ```bash
+   npx rulesync init
+   ```
+
+3. Edit `rulesync.jsonc` to configure for project-based output:
+   ```json
+   {
+     "$schema": "https://raw.githubusercontent.com/dyoshikawa/rulesync/refs/heads/main/config-schema.json",
+     "targets": ["cursor", "claudecode"],
+     "features": ["rules", "commands"],
+     "baseDirs": ["."],
+     "delete": true
+   }
+   ```
+
+4. Customize your rules in `.rulesync/rules/`, commands in `.rulesync/commands/`, etc.
+
+5. Generate the configurations:
+   ```bash
+   npx rulesync generate
+   ```
+
+6. Add generated files to `.gitignore` (optional, or commit them):
+   ```bash
+   npx rulesync gitignore
+   ```
+
+This will create tool-specific config files directly in your project (e.g., `.cursor/rules/`, `.claude/`, `CLAUDE.md`) that can be committed to version control.
+
 ## Prerequisites
 
 - **Node.js** and **npm** (for running `rulesync`)
