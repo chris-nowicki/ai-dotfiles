@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 set -e
 
-npx rulesync generate \
-  --targets cursor,opencode \
-  --features commands,rules,subagents,skills \
-  --delete
+npx rulesync generate
 
 stow -t ~ out

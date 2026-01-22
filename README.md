@@ -1,6 +1,6 @@
 # AI Tooling
 
-A centralized repository for managing AI coding assistant configurations across multiple tools (Cursor, GitHub Copilot, Claude Code, Codex CLI, and OpenCode) using [rulesync](https://github.com/oraios/rulesync) and GNU Stow for symlink management.
+A centralized repository for managing AI coding assistant configurations across multiple tools (Cursor, GitHub Copilot, Claude Code, Codex CLI, and OpenCode) using [rulesync](https://github.com/dyoshikawa/rulesync) and GNU Stow for symlink management.
 
 ## Overview
 
@@ -8,16 +8,83 @@ This repository provides a unified way to manage:
 - **Rules**: Coding guidelines and project-specific instructions
 - **Commands**: Custom commands for AI assistants (e.g., commit, PR creation)
 - **Subagents**: Specialized AI agents for specific tasks (e.g., planner)
+- **Skills**: Reusable instructions for specific tasks
 - **MCP Servers**: Model Context Protocol server configurations
 - **Ignore Patterns**: Files and patterns to exclude from AI context
 
 All configurations are written once in the `.rulesync/` directory and automatically generated for each target AI tool, then symlinked into your home directory using GNU Stow.
+
+## How It Works
+
+This repository uses rulesync in **GLOBAL mode** with GNU Stow to make AI configurations available to all projects on your machine. There are two ways to use rulesync:
+
+```mermaid
+flowchart TB
+    subgraph source [Source Files]
+        RS[.rulesync/]
+        RS --> Rules[rules/]
+        RS --> Commands[commands/]
+        RS --> Subagents[subagents/]
+        RS --> Skills[skills/]
+    end
+
+    subgraph global [GLOBAL Mode - This Repo]
+        G1[rulesync generate] --> OUT[out/]
+        OUT --> STOW[stow -t ~ out]
+        STOW --> HOME["~/.cursor/, ~/.opencode/"]
+        HOME --> ALL[Available to ALL projects]
+    end
+
+    subgraph project [Project-Based Mode]
+        P1[rulesync generate] --> PROJ[.cursor/, .opencode/]
+        PROJ --> REPO[Stays in project repo]
+    end
+
+    RS --> G1
+    RS --> P1
+```
+
+### GLOBAL Mode (This Repository)
+
+- **Source**: `.rulesync/` directory in this centralized AI-Tools repo
+- **Generate**: `rulesync generate` outputs tool-specific configs to `out/`
+- **Symlink**: `stow -t ~ out` creates symlinks in your home directory (`~/.cursor/`, `~/.opencode/`, etc.)
+- **Result**: Configurations are available to **all projects** on your machine
+
+### Project-Based Mode
+
+- **Source**: `.rulesync/` directory lives in your project repo
+- **Generate**: `rulesync generate` with `baseDirs: ["."]` outputs directly to the project
+- **Result**: Configurations stay in the project and are committed to the repo
 
 ## Prerequisites
 
 - **Node.js** and **npm** (for running `rulesync`)
 - **GNU Stow** (for symlink management)
   - Install via Homebrew: `brew install stow`
+
+## Installing Rulesync
+
+### Via npm (recommended)
+
+```bash
+npm install -g rulesync
+```
+
+### Via Homebrew
+
+```bash
+brew install rulesync
+```
+
+### Without Installation (npx)
+
+You can run rulesync without installing it globally:
+
+```bash
+npx rulesync --version
+npx rulesync --help
+```
 
 ## Installation
 
@@ -79,9 +146,12 @@ AI-Tools/
 │   │   └── overview.md     # General project guidelines
 │   ├── commands/           # Custom AI assistant commands
 │   │   ├── commit.md       # Conventional commits command
-│   │   └── pr.md           # PR creation command
+│   │   └── create-pr.md    # PR creation command
 │   ├── subagents/          # Specialized AI agents
 │   │   └── planner.md      # Planning agent
+│   ├── skills/             # Reusable AI skills
+│   │   └── example-skill/  # Example skill (delete and replace)
+│   │       └── SKILL.md
 │   ├── mcp.json            # MCP server configurations
 │   └── .aiignore           # Files to ignore in AI context
 ├── out/                    # Generated output (gitignored)
@@ -100,7 +170,7 @@ AI-Tools/
 The main configuration file defines:
 
 - **targets**: AI tools to generate configs for (`copilot`, `cursor`, `claudecode`, `codexcli`, `opencode`)
-- **features**: What to generate (`rules`, `ignore`, `mcp`, `commands`, `subagents`)
+- **features**: What to generate (`rules`, `ignore`, `mcp`, `commands`, `subagents`, `skills`)
 - **baseDirs**: Output directory (default: `./out`)
 - **delete**: Whether to delete old files during generation
 
@@ -150,6 +220,24 @@ The main configuration file defines:
    Agent instructions...
    ```
 3. Run `./sync.sh` to apply changes
+
+### Adding New Skills
+
+Skills are directory-based and can include supporting files alongside the main `SKILL.md`.
+
+1. Create a new directory in `.rulesync/skills/` with your skill name
+2. Create a `SKILL.md` file with frontmatter:
+   ```markdown
+   ---
+   name: your-skill-name
+   description: "What this skill does"
+   targets: ["*"]
+   ---
+   
+   Skill instructions and content...
+   ```
+3. Optionally add supporting files (templates, examples) in the same directory
+4. Run `./sync.sh` to apply changes
 
 ## Supported AI Tools
 

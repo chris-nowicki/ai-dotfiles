@@ -1,16 +1,17 @@
 {
+  "$schema": "https://raw.githubusercontent.com/dyoshikawa/rulesync/refs/heads/main/config-schema.json",
   "targets": [
-    "copilot",
     "cursor",
-    "claudecode",
-    "codexcli"
+    "opencode",
+    "claudecode"
   ],
   "features": [
     "rules",
     "ignore",
     "mcp",
     "commands",
-    "subagents"
+    "subagents",
+    "skills"
   ],
   "baseDirs": [
     "./out"
