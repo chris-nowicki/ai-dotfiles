@@ -1,4 +1,4 @@
-# AI Tooling
+# AI Dotfiles
 
 Manage your AI coding assistant settings in one place, then automatically sync them to all your projects.
 
