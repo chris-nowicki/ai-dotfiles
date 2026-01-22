@@ -5,7 +5,9 @@ description: ''
 ---
 Your job is to create a commit using Conventional Commits format.
 
-First, review the staged changes with `git status` and `git diff --cached` to understand what was changed.
+First, ensure that the branch is not main.  If the branch is main, create a new branch.
+
+Then review the staged changes with `git status` and `git diff --cached` to understand what was changed.
 
 Then create a commit message following this format:
 

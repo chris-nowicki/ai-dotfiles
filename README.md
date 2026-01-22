@@ -1,197 +1,362 @@
-# AI Tooling
+# AI Dotfiles
 
-A centralized repository for managing AI coding assistant configurations across multiple tools (Cursor, GitHub Copilot, Claude Code, Codex CLI, and OpenCode) using [rulesync](https://github.com/oraios/rulesync) and GNU Stow for symlink management.
+Manage your AI coding assistant settings in one place, then automatically sync them to all your projects.
 
-## Overview
+## The Problem
 
-This repository provides a unified way to manage:
-- **Rules**: Coding guidelines and project-specific instructions
-- **Commands**: Custom commands for AI assistants (e.g., commit, PR creation)
-- **Subagents**: Specialized AI agents for specific tasks (e.g., planner)
-- **MCP Servers**: Model Context Protocol server configurations
-- **Ignore Patterns**: Files and patterns to exclude from AI context
+AI coding assistants like Cursor, Claude Code, and GitHub Copilot each have their own configuration files. If you want consistent behavior across tools and projects, you end up:
 
-All configurations are written once in the `.rulesync/` directory and automatically generated for each target AI tool, then symlinked into your home directory using GNU Stow.
+- Copying the same rules to every project
+- Maintaining duplicate configs that get out of sync
+- Recreating your setup on new machines
 
-## Prerequisites
+## The Solution
 
-- **Node.js** and **npm** (for running `rulesync`)
-- **GNU Stow** (for symlink management)
-  - Install via Homebrew: `brew install stow`
+This repository lets you:
 
-## Installation
+1. **Write your AI configurations once** in a simple format
+2. **Auto-generate** tool-specific configs for Cursor, Claude Code, OpenCode, etc.
+3. **Sync everywhere** so all your projects use the same settings
 
-1. Clone this repository:
-   ```bash
-   git clone <repository-url>
-   cd AI-Tools
-   ```
+## Quick Start
 
-2. Make the sync script executable:
-   ```bash
-   chmod +x sync.sh
-   ```
+### 1. Install the tools
 
-3. Run the sync script to generate configurations and create symlinks:
-   ```bash
-   ./sync.sh
-   ```
+```bash
+# Install rulesync (converts your configs to each tool's format)
+npm install -g rulesync
 
-This will:
-- Generate target-specific configuration files in the `out/` directory
-- Create symlinks in your home directory (`~`) using GNU Stow
+# Install stow (creates shortcuts to your configs)
+brew install stow
+```
 
-## Usage
+### 2. Clone and set up
 
-### Syncing Configurations
+```bash
+git clone <repository-url>
+cd ai-dotfiles
+chmod +x sync.sh
+```
 
-After making changes to any files in `.rulesync/`, run:
+### 3. Run the sync
 
 ```bash
 ./sync.sh
 ```
 
-This script:
-1. Runs `rulesync generate` to create configuration files for all targets specified in `rulesync.jsonc`
-2. Uses `stow` to symlink the generated files to your home directory
+That's it! Your AI configurations are now available to all projects on your machine.
 
-### Manual Sync
+## How It Works
 
-You can also run the commands manually:
+```mermaid
+flowchart LR
+    subgraph global [GLOBAL Mode]
+        direction TB
+        G_REPO["ai-dotfiles repo"]
+        G_RS[".rulesync/"]
+        G_GEN["rulesync generate"]
+        G_OUT["out/"]
+        G_STOW["stow -t ~ out"]
+        G_HOME["~/.cursor/"]
+        G_ALL["All projects on machine"]
+
+        G_REPO --> G_RS
+        G_RS --> G_GEN
+        G_GEN --> G_OUT
+        G_OUT --> G_STOW
+        G_STOW --> G_HOME
+        G_HOME --> G_ALL
+    end
+
+    subgraph project [Project-Based Mode]
+        direction TB
+        P_REPO["Your project repo"]
+        P_INIT["npx rulesync init"]
+        P_RS[".rulesync/"]
+        P_GEN["rulesync generate"]
+        P_OUT[".cursor/"]
+        P_STAY["Committed to repo"]
+
+        P_REPO --> P_INIT
+        P_INIT --> P_RS
+        P_RS --> P_GEN
+        P_GEN --> P_OUT
+        P_OUT --> P_STAY
+    end
+```
+
+**GLOBAL Mode** (what this repo does):
+- Your configs live in this central repo
+- `rulesync` converts them to each AI tool's format
+- `stow` creates shortcuts in your home folder
+- Every project on your machine can use them
+
+**Project-Based Mode** (alternative):
+- Configs live inside a specific project
+- Generated files are committed to that repo
+- Only that project uses them
+
+## What You Can Configure
+
+All your settings live in the `.rulesync/` folder:
+
+| Folder | What it does | Example |
+|--------|--------------|---------|
+| `rules/` | Coding guidelines the AI follows | "Use TypeScript", "Prefer composition over inheritance" |
+| `commands/` | Custom slash commands | `/commit` for conventional commits, `/create-pr` for pull requests |
+| `subagents/` | Specialized AI agents | A "planner" agent for designing features |
+| `skills/` | Reusable instructions | Templates for common tasks |
+| `mcp.json` | External tool connections | Connect to documentation servers |
+| `.aiignore` | Files to hide from AI | Ignore `node_modules/`, `.env` files |
+
+## Making Changes
+
+After editing any files in `.rulesync/`, run:
 
 ```bash
-# Generate configurations
-npx rulesync generate \
-  --targets cursor,opencode \
-  --features commands,rules,subagents,skills \
-  --delete
-
-# Create symlinks
-stow -t ~ out
+./sync.sh
 ```
+
+This regenerates all configs and updates the shortcuts.
+
+## Customizing Your Setup
+
+The `rulesync.jsonc` file controls which AI tools and features are synced. Open it to customize:
+
+### Adding or Removing AI Tools
+
+The `targets` array controls which AI tools receive your configurations:
+
+```json
+{
+  "targets": [
+    "cursor",      // Cursor editor
+    "claudecode",  // Claude Code
+    "opencode"     // OpenCode
+  ]
+}
+```
+
+**Want to add GitHub Copilot?** Add `"copilot"` to the array:
+
+```json
+{
+  "targets": [
+    "cursor",
+    "claudecode",
+    "opencode",
+    "copilot"
+  ]
+}
+```
+
+**Only using Cursor?** Remove the others:
+
+```json
+{
+  "targets": [
+    "cursor"
+  ]
+}
+```
+
+Available targets: `cursor`, `claudecode`, `opencode`, `copilot`, `codexcli`, `geminicli`, `cline`, `kilocode`, `roocode`
+
+### Enabling or Disabling Features
+
+The `features` array controls what types of configurations are generated:
+
+```json
+{
+  "features": [
+    "rules",      // Coding guidelines
+    "commands",   // Custom slash commands
+    "subagents",  // Specialized AI agents
+    "skills",     // Reusable instructions
+    "ignore",     // .aiignore patterns
+    "mcp"         // External tool connections
+  ]
+}
+```
+
+**Don't use subagents?** Remove it:
+
+```json
+{
+  "features": [
+    "rules",
+    "commands",
+    "skills"
+  ]
+}
+```
+
+**Only want rules?** Keep just that:
+
+```json
+{
+  "features": [
+    "rules"
+  ]
+}
+```
+
+After changing `rulesync.jsonc`, run `./sync.sh` to apply your changes.
+
+## Adding Your Own Configurations
+
+Each configuration file has a `targets` field in its frontmatter that controls which AI tools receive it:
+
+- `targets: ["*"]` — Send to **all tools** in your `rulesync.jsonc` config
+- `targets: ["cursor", "claudecode"]` — Send **only to these specific tools**
+
+This lets you have universal configs and tool-specific ones. For example, if a feature only works in Cursor, set `targets: ["cursor"]` so it doesn't get sent to other tools.
+
+### Rules
+
+Rules are coding guidelines the AI will follow. Create a markdown file in `.rulesync/rules/`:
+
+```markdown
+---
+root: true
+targets: ["*"]
+description: "My coding standards"
+globs: ["**/*"]
+---
+
+# My Coding Standards
+
+- Use TypeScript for all new code
+- Write tests for new features
+- Use meaningful variable names
+```
+
+### Commands
+
+Commands are custom actions you can trigger with `/command-name`. Create a markdown file in `.rulesync/commands/`:
+
+```markdown
+---
+targets: ["*"]
+description: "Create a new React component"
+---
+
+Create a new React component with:
+- TypeScript
+- CSS modules
+- Unit tests
+```
+
+### Subagents
+
+Subagents are specialized AI assistants for specific tasks. Create a markdown file in `.rulesync/subagents/`:
+
+```markdown
+---
+name: reviewer
+targets: ["*"]
+description: "Code review specialist"
+---
+
+You are a code reviewer. Focus on:
+- Security issues
+- Performance problems
+- Code clarity
+```
+
+### Skills
+
+Skills are reusable instruction sets. Create a folder in `.rulesync/skills/your-skill-name/` with a `SKILL.md` file:
+
+```markdown
+---
+name: api-design
+description: "REST API design patterns"
+targets: ["*"]
+---
+
+When designing REST APIs:
+- Use plural nouns for resources
+- Return appropriate HTTP status codes
+- Include pagination for lists
+```
+
+## Using Project-Based Mode
+
+If you want AI configs for just one specific project (instead of all projects), you can set up rulesync directly in that repo:
+
+```bash
+# Go to your project
+cd /path/to/your/project
+
+# Initialize rulesync
+npx rulesync init
+
+# Edit rulesync.jsonc and set baseDirs to current directory
+# "baseDirs": ["."]
+
+# Generate configs
+npx rulesync generate
+
+# Optionally add generated files to .gitignore
+npx rulesync gitignore
+```
+
+The generated files (`.cursor/`, `CLAUDE.md`, etc.) will be created in your project and can be committed to version control.
+
+## Supported AI Tools
+
+| Tool | Description |
+|------|-------------|
+| [Cursor](https://cursor.sh) | AI-powered code editor |
+| [Claude Code](https://claude.ai/code) | Anthropic's coding assistant |
+| [GitHub Copilot](https://github.com/features/copilot) | AI pair programmer |
+| [OpenCode](https://github.com/opencode-ai/opencode) | Open-source coding assistant |
+| [Codex CLI](https://github.com/openai/codex) | OpenAI's command-line assistant |
 
 ## Repository Structure
 
 ```
-AI-Tools/
-├── .rulesync/              # Source configuration files
-│   ├── rules/              # Coding rules and guidelines
-│   │   └── overview.md     # General project guidelines
-│   ├── commands/           # Custom AI assistant commands
-│   │   ├── commit.md       # Conventional commits command
-│   │   └── pr.md           # PR creation command
-│   ├── subagents/          # Specialized AI agents
-│   │   └── planner.md      # Planning agent
-│   ├── mcp.json            # MCP server configurations
-│   └── .aiignore           # Files to ignore in AI context
-├── out/                    # Generated output (gitignored)
-│   ├── .cursor/            # Cursor-specific configs
-│   ├── .opencode/          # OpenCode-specific configs
-│   └── AGENTS.md           # Shared agent guidelines
-├── rulesync.jsonc          # Rulesync configuration
-├── sync.sh                 # Sync script
-└── README.md               # This file
+ai-dotfiles/
+├── .rulesync/              # Your source configs (edit these!)
+│   ├── rules/              # Coding guidelines
+│   ├── commands/           # Custom commands
+│   ├── subagents/          # Specialized agents
+│   ├── skills/             # Reusable skills
+│   ├── mcp.json            # External tool connections
+│   └── .aiignore           # Files to hide from AI
+├── out/                    # Generated output (don't edit!)
+├── rulesync.jsonc          # Rulesync settings
+├── sync.sh                 # Run this after changes
+└── README.md
 ```
-
-## Configuration
-
-### rulesync.jsonc
-
-The main configuration file defines:
-
-- **targets**: AI tools to generate configs for (`copilot`, `cursor`, `claudecode`, `codexcli`, `opencode`)
-- **features**: What to generate (`rules`, `ignore`, `mcp`, `commands`, `subagents`)
-- **baseDirs**: Output directory (default: `./out`)
-- **delete**: Whether to delete old files during generation
-
-### Adding New Rules
-
-1. Create a new markdown file in `.rulesync/rules/`
-2. Add frontmatter with target specifications:
-   ```markdown
-   ---
-   root: true
-   targets: ["*"]  # or specific targets like ["cursor", "copilot"]
-   description: "Your rule description"
-   globs: ["**/*"]  # Files this rule applies to
-   ---
-   
-   # Your Rule Title
-   
-   Your rule content here...
-   ```
-3. Run `./sync.sh` to apply changes
-
-### Adding New Commands
-
-1. Create a new markdown file in `.rulesync/commands/`
-2. Add frontmatter:
-   ```markdown
-   ---
-   targets: ["*"]
-   description: "Command description"
-   ---
-   
-   Your command instructions...
-   ```
-3. Run `./sync.sh` to apply changes
-
-### Adding New Subagents
-
-1. Create a new markdown file in `.rulesync/subagents/`
-2. Add frontmatter with agent configuration:
-   ```markdown
-   ---
-   name: agent-name
-   targets: ["*"]
-   description: "Agent description"
-   ---
-   
-   Agent instructions...
-   ```
-3. Run `./sync.sh` to apply changes
-
-## Supported AI Tools
-
-- **Cursor**: AI-powered code editor
-- **GitHub Copilot**: AI pair programmer
-- **Claude Code**: Anthropic's coding assistant
-- **Codex CLI**: OpenAI's command-line coding assistant
-- **OpenCode**: Open-source coding assistant
-
-## MCP Servers
-
-The repository includes MCP (Model Context Protocol) server configurations in `.rulesync/mcp.json`:
-
-- **serena**: IDE assistant with web dashboard support
-- **context7**: Upstash Context7 MCP server
 
 ## Troubleshooting
 
-### Symlinks Not Working
+### "stow: command not found"
 
-If symlinks aren't created properly:
-- Ensure GNU Stow is installed: `which stow`
-- Check for existing conflicting files in your home directory
-- Use `stow -n -t ~ out` to simulate what stow would do (dry run)
+Install GNU Stow:
+```bash
+brew install stow
+```
 
-### Rules Not Appearing
+### Symlinks not working
 
-- Verify the target in the rule's frontmatter matches your AI tool
-- Check that the feature is enabled in `rulesync.jsonc`
-- Ensure the file is in the correct directory (`.rulesync/rules/`)
+Check for conflicting files in your home directory:
+```bash
+# See what stow would do (dry run)
+stow -n -t ~ out
+```
 
-### Stow Conflicts
+If there are conflicts, remove or rename the existing files, then run `./sync.sh` again.
 
-If Stow reports conflicts:
-- Remove or rename conflicting files in your home directory
-- Use `stow --adopt -t ~ out` to adopt existing files (use with caution)
+### Changes not appearing
 
-## Contributing
+1. Make sure you edited files in `.rulesync/` (not `out/`)
+2. Run `./sync.sh` to regenerate
+3. Restart your AI tool to pick up changes
 
-When adding new configurations:
+## Learn More
 
-1. Edit files in `.rulesync/` (never edit files in `out/` directly)
-2. Test your changes by running `./sync.sh`
-3. Verify the generated output in `out/`
-4. Commit your changes
+- [Rulesync Documentation](https://github.com/dyoshikawa/rulesync)
+- [GNU Stow Manual](https://www.gnu.org/software/stow/manual/)
