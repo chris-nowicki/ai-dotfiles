@@ -20,14 +20,10 @@ This repository lets you:
 
 ## Quick Start
 
-### 1. Install the tools
+### 1. Install rulesync
 
 ```bash
-# Install rulesync (converts your configs to each tool's format)
 npm install -g rulesync
-
-# Install stow (creates shortcuts to your configs)
-brew install stow
 ```
 
 ### 2. Clone and set up
@@ -35,16 +31,20 @@ brew install stow
 ```bash
 git clone <repository-url>
 cd ai-dotfiles
-chmod +x sync.sh
+chmod +x setup.sh
+./setup.sh
 ```
 
-### 3. Run the sync
+This creates a symlink from `~/.rulesync` to your repo's `.rulesync/` directory.
+
+### 3. Generate configs in your projects
 
 ```bash
-./sync.sh
+cd /path/to/your/project
+rulesync generate -g
 ```
 
-That's it! Your AI configurations are now available to all projects on your machine.
+That's it! Your AI configurations are now generated in each project you work on.
 
 ## How It Works
 
@@ -54,18 +54,18 @@ flowchart LR
         direction TB
         G_REPO["ai-dotfiles repo"]
         G_RS[".rulesync/"]
-        G_GEN["rulesync generate"]
-        G_OUT["out/"]
-        G_STOW["stow -t ~ out"]
-        G_HOME["~/.cursor/"]
-        G_ALL["All projects on machine"]
+        G_SETUP["setup.sh"]
+        G_HOME["~/.rulesync/"]
+        G_PROJECT["Your project"]
+        G_GEN["rulesync generate -g"]
+        G_OUT[".cursor/, CLAUDE.md, etc."]
 
         G_REPO --> G_RS
-        G_RS --> G_GEN
+        G_RS --> G_SETUP
+        G_SETUP --> G_HOME
+        G_PROJECT --> G_GEN
         G_GEN --> G_OUT
-        G_OUT --> G_STOW
-        G_STOW --> G_HOME
-        G_HOME --> G_ALL
+        G_HOME -.->|reads from| G_GEN
     end
 
     subgraph project [Project-Based Mode]
@@ -87,9 +87,9 @@ flowchart LR
 
 **GLOBAL Mode** (what this repo does):
 - Your configs live in this central repo
-- `rulesync` converts them to each AI tool's format
-- `stow` creates shortcuts in your home folder
-- Every project on your machine can use them
+- `setup.sh` creates a symlink from `~/.rulesync` to your repo
+- Run `rulesync generate -g` in any project to generate configs from the global source
+- Every project on your machine can use the same settings
 
 **Project-Based Mode** (alternative):
 - Configs live inside a specific project
@@ -111,13 +111,14 @@ All your settings live in the `.rulesync/` folder:
 
 ## Making Changes
 
-After editing any files in `.rulesync/`, run:
+After editing any files in `.rulesync/`, regenerate configs in your projects:
 
 ```bash
-./sync.sh
+cd /path/to/your/project
+rulesync generate -g
 ```
 
-This regenerates all configs and updates the shortcuts.
+This regenerates all AI tool configs from your global `.rulesync/` source.
 
 ## Customizing Your Setup
 
@@ -201,7 +202,7 @@ The `features` array controls what types of configurations are generated:
 }
 ```
 
-After changing `rulesync.jsonc`, run `./sync.sh` to apply your changes.
+After changing `rulesync.jsonc`, run `rulesync generate -g` in your projects to apply your changes.
 
 ## Adding Your Own Configurations
 
@@ -283,7 +284,7 @@ When designing REST APIs:
 
 ## Using Project-Based Mode
 
-If you want AI configs for just one specific project (instead of all projects), you can set up rulesync directly in that repo:
+If you want AI configs for just one specific project (instead of using global configs), you can set up rulesync directly in that repo:
 
 ```bash
 # Go to your project
@@ -292,10 +293,7 @@ cd /path/to/your/project
 # Initialize rulesync
 npx rulesync init
 
-# Edit rulesync.jsonc and set baseDirs to current directory
-# "baseDirs": ["."]
-
-# Generate configs
+# Generate configs (without -g flag for local mode)
 npx rulesync generate
 
 # Optionally add generated files to .gitignore
@@ -325,38 +323,33 @@ ai-dotfiles/
 │   ├── skills/             # Reusable skills
 │   ├── mcp.json            # External tool connections
 │   └── .aiignore           # Files to hide from AI
-├── out/                    # Generated output (don't edit!)
 ├── rulesync.jsonc          # Rulesync settings
-├── sync.sh                 # Run this after changes
+├── setup.sh                # Run once to create ~/.rulesync symlink
 └── README.md
 ```
 
 ## Troubleshooting
 
-### "stow: command not found"
+### Symlink already exists
 
-Install GNU Stow:
+If `setup.sh` reports that `~/.rulesync` already exists:
 ```bash
-brew install stow
+# Check what it points to
+ls -la ~/.rulesync
+
+# Remove it if it's outdated
+rm ~/.rulesync
+
+# Run setup again
+./setup.sh
 ```
-
-### Symlinks not working
-
-Check for conflicting files in your home directory:
-```bash
-# See what stow would do (dry run)
-stow -n -t ~ out
-```
-
-If there are conflicts, remove or rename the existing files, then run `./sync.sh` again.
 
 ### Changes not appearing
 
-1. Make sure you edited files in `.rulesync/` (not `out/`)
-2. Run `./sync.sh` to regenerate
+1. Make sure you edited files in `.rulesync/`
+2. Run `rulesync generate -g` in your project to regenerate
 3. Restart your AI tool to pick up changes
 
 ## Learn More
 
 - [Rulesync Documentation](https://github.com/dyoshikawa/rulesync)
-- [GNU Stow Manual](https://www.gnu.org/software/stow/manual/)
