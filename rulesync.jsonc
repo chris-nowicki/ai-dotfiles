@@ -8,13 +8,9 @@
   "features": [
     "rules",
     "ignore",
-    "mcp",
     "commands",
     "subagents",
     "skills"
-  ],
-  "baseDirs": [
-    "./out"
   ],
   "delete": true
 }
