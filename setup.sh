@@ -17,3 +17,16 @@ fi
 
 ln -s "$SOURCE_DIR" "$TARGET_DIR"
 echo "Created symlink: $TARGET_DIR -> $SOURCE_DIR"
+
+# Run initial sync if rulesync is installed
+if command -v rulesync &> /dev/null; then
+  echo ""
+  echo "Running initial sync..."
+  rulesync generate -g
+  echo "Done! Global configs generated."
+else
+  echo ""
+  echo "Next step: install rulesync and run your first sync:"
+  echo "  npm install -g rulesync"
+  echo "  make sync"
+fi
