@@ -1,4 +1,18 @@
 # Skills vendored from upstream repos, refreshed by `make update-vendored`.
-# Format: <skill-name> <raw-url-to-SKILL.md>
+# Format: <skill-name> <raw-url-to-SKILL.md> [extra-file1,extra-file2,...]
+# Extra files are fetched from the same directory as the SKILL.md URL.
 humanizer https://raw.githubusercontent.com/blader/humanizer/main/SKILL.md
 bro https://raw.githubusercontent.com/dmmulroy/skills/main/bro/SKILL.md
+animate-expo https://raw.githubusercontent.com/emilkowalski/skills/main/skills/animate-expo/SKILL.md RECIPES.md
+animate https://raw.githubusercontent.com/emilkowalski/skills/main/skills/animate/SKILL.md RECIPES.md
+animation-vocabulary https://raw.githubusercontent.com/emilkowalski/skills/main/skills/animation-vocabulary/SKILL.md
+apple-design https://raw.githubusercontent.com/emilkowalski/skills/main/skills/apple-design/SKILL.md
+ask-sonner https://raw.githubusercontent.com/emilkowalski/skills/main/skills/ask-sonner/SKILL.md API.md
+emil-design-eng https://raw.githubusercontent.com/emilkowalski/skills/main/skills/emil-design-eng/SKILL.md
+find-animation-opportunities https://raw.githubusercontent.com/emilkowalski/skills/main/skills/find-animation-opportunities/SKILL.md
+improve-animations https://raw.githubusercontent.com/emilkowalski/skills/main/skills/improve-animations/SKILL.md AUDIT.md,PLAN-TEMPLATE.md
+mobile-native https://raw.githubusercontent.com/emilkowalski/skills/main/skills/mobile-native/SKILL.md
+pick-ui-library https://raw.githubusercontent.com/emilkowalski/skills/main/skills/pick-ui-library/SKILL.md
+prototype https://raw.githubusercontent.com/emilkowalski/skills/main/skills/prototype/SKILL.md PICKER.md
+review-animations https://raw.githubusercontent.com/emilkowalski/skills/main/skills/review-animations/SKILL.md STANDARDS.md
+write-swift https://raw.githubusercontent.com/emilkowalski/skills/main/skills/write-swift/SKILL.md

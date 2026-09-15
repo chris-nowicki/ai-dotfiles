@@ -1,6 +1,7 @@
 #!/bin/bash
 # Refresh skills vendored from upstream repos, as listed in vendored-skills.txt.
-# Overwrites each skill's SKILL.md — never hand-edit vendored skills.
+# Overwrites each skill's SKILL.md (and any listed extra files) — never
+# hand-edit vendored skills.
 
 set -euo pipefail
 
@@ -13,7 +14,25 @@ if [ ! -f "$MANIFEST" ]; then
   exit 1
 fi
 
-while read -r name url; do
+fetch_file() {
+  # fetch_file <url> <dest>
+  local url="$1" dest="$2" tmp
+  tmp="$(mktemp)"
+  if ! curl -fsSL "$url" -o "$tmp"; then
+    echo "  Error: download failed for $url"
+    rm -f "$tmp"
+    return 1
+  fi
+  if [ -f "$dest" ] && cmp -s "$tmp" "$dest"; then
+    echo "  Already up to date: $(basename "$dest")"
+    rm -f "$tmp"
+  else
+    mv "$tmp" "$dest"
+    echo "  Updated $dest"
+  fi
+}
+
+while read -r name url extra; do
   # Skip comments and blank lines
   case "$name" in
     ''|\#*) continue ;;
@@ -44,6 +63,14 @@ while read -r name url; do
   else
     mv "$tmp" "$dest"
     echo "  Updated $dest"
+  fi
+
+  if [ -n "$extra" ]; then
+    base_url="${url%/*}"
+    IFS=',' read -ra extra_files <<< "$extra"
+    for f in "${extra_files[@]}"; do
+      fetch_file "$base_url/$f" "$dest_dir/$f"
+    done
   fi
 done < "$MANIFEST"
 

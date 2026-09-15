@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/dyoshikawa/rulesync/refs/heads/main/config-schema.json",
-  "targets": ["claudecode", "codexcli"],
+  "targets": ["claudecode", "codexcli", "pi"],
   "features": ["rules", "ignore", "commands", "subagents", "skills"],
   "simulateSkills": true,
   "delete": true

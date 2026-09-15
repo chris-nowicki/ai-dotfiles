@@ -48,14 +48,20 @@ make check
 
 ### Vendored Skills
 
-Skills listed in `vendored-skills.txt` (name + raw `SKILL.md` URL) are copied from
-upstream repos, not authored here. `scripts/update-vendored.sh` re-downloads them and
-overwrites the local copy, so never hand-edit a vendored `SKILL.md` — put local
-changes in a separate skill or rule instead. The copies are committed, so `make setup`
-on a new machine installs them without network access to the upstream repos.
+Skills listed in `vendored-skills.txt` (name, raw `SKILL.md` URL, and optional
+comma-separated extra filenames fetched from the same upstream directory) are copied
+from upstream repos, not authored here. `scripts/update-vendored.sh` re-downloads them
+and overwrites the local copy, so never hand-edit a vendored `SKILL.md` (or its extra
+files) — put local changes in a separate skill or rule instead. The copies are
+committed, so `make setup` on a new machine installs them without network access to
+the upstream repos.
 
-Currently vendored: `humanizer` (from [blader/humanizer](https://github.com/blader/humanizer), MIT)
-and `bro` (from [dmmulroy/skills](https://github.com/dmmulroy/skills), MIT).
+Currently vendored: `humanizer` (from [blader/humanizer](https://github.com/blader/humanizer), MIT),
+`bro` (from [dmmulroy/skills](https://github.com/dmmulroy/skills), MIT), and 13 design/animation
+skills from [emilkowalski/skills](https://github.com/emilkowalski/skills) (`animate`, `animate-expo`,
+`animation-vocabulary`, `apple-design`, `ask-sonner`, `emil-design-eng`,
+`find-animation-opportunities`, `improve-animations`, `mobile-native`, `pick-ui-library`,
+`prototype`, `review-animations`, `write-swift`).
 
 ### Configuration Files
 
