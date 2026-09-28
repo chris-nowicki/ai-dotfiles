@@ -2,5 +2,21 @@
   "$schema": "https://raw.githubusercontent.com/dyoshikawa/rulesync/refs/heads/main/config-schema.json",
   "targets": ["cursor", "claudecode", "codexcli"],
   "features": ["rules", "ignore", "commands", "subagents", "skills"],
-  "delete": true
+  "delete": true,
+  "sources": [
+    {
+      "source": "herdrdev/herdr",
+      "skills": [
+        "herdr"
+      ]
+    },
+    {
+      "source": "https://github.com/dmmulroy/skills",
+      "skills": [
+        "bro"
+      ],
+      "transport": "git",
+      "path": "."
+    }
+  ]
 }
