@@ -1,0 +1,31 @@
+{
+  "lockfileVersion": 1,
+  "sources": {
+    "herdrdev/herdr": {
+      "requestedRef": "master",
+      "resolvedRef": "d5680d84fd1df3b592424eae5c50d54642f0727d",
+      "resolvedAt": "2026-09-28T15:56:07.316Z",
+      "skills": {
+        "herdr": {
+          "integrity": "sha256-0a6ebe188d93b7249d76cf00d7f20dbe75554971a3212f422eac17a02899af70"
+        }
+      },
+      "skillSelection": [
+        "herdr"
+      ]
+    },
+    "dmmulroy/skills": {
+      "requestedRef": "main",
+      "resolvedRef": "8603380821fee6a77c82639f364ce8fe4f5a92be",
+      "resolvedAt": "2026-09-28T15:58:10.788Z",
+      "skills": {
+        "bro": {
+          "integrity": "sha256-a333dd2281770dcc9fb2317b066bd0dbefd780aa9abfd6b19f7d31db3ad3f007"
+        }
+      },
+      "skillSelection": [
+        "bro"
+      ]
+    }
+  }
+}

@@ -22,6 +22,7 @@ echo "Created symlink: $TARGET_DIR -> $SOURCE_DIR"
 if command -v rulesync &> /dev/null; then
   echo ""
   echo "Running initial sync..."
+  rulesync install
   rulesync generate -g
   echo "Done! Global configs generated."
 else

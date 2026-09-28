@@ -20,6 +20,9 @@ make sync
 # Preview what will be generated without writing files
 make dry-run
 
+# Bump declarative skill sources (rulesync.jsonc "sources") to latest upstream
+make update-sources
+
 # Re-download skills vendored from upstream repos (see vendored-skills.txt)
 make update-vendored
 
@@ -45,6 +48,18 @@ make check
 | `subagents/` | Specialized AI agent definitions (e.g., `planner.md` — read-only analysis agent). |
 | `skills/` | Reusable instruction sets. Each skill is a directory containing a `SKILL.md`. Some are vendored from upstream repos — see below. |
 | `.aiignore` | Patterns for files AI tools should ignore (like `.gitignore` for AI). |
+
+### Declarative Skill Sources
+
+`rulesync.jsonc` has a `sources` array of upstream repos that rulesync fetches itself.
+`make sync` runs `rulesync install` first, which downloads the selected skills into
+`.rulesync/skills/.curated/` (gitignored) at the commit pinned in `rulesync.lock`
+(committed). `make update-sources` re-resolves every source to its latest commit and
+rewrites the lockfile. A local skill in `.rulesync/skills/<name>/` with the same name
+wins over a curated one. Add a new source with
+`rulesync add owner/repo --skills <name>`.
+
+Currently sourced: `herdr` (from [herdrdev/herdr](https://github.com/herdrdev/herdr)).
 
 ### Vendored Skills
 

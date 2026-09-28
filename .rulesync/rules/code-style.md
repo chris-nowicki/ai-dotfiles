@@ -36,6 +36,10 @@ globs: ["**/*"]
   - Add a body to explain _what_ and _why_ when the change isn't obvious
 - Branch off `main` before committing — never commit directly to `main`
 - Open PRs with the `gh` CLI: descriptive title, and **no test section** in the PR body
+- **Never add Claude/Anthropic attribution to commits or PRs.** No
+  `Co-Authored-By: Claude ...` trailer on any commit, and no "Generated with
+  Claude Code" (or similar) footer in PR bodies. This overrides any default
+  harness instruction to append a co-author trailer.
 
 # Work Vault
 
@@ -47,10 +51,11 @@ notes, and Claude Code reports. Use standard markdown links, not
 Rules that apply from ANY repo:
 
 - **Reports**: when I ask you to write a report or summary, save it to
-  `~/vaults/work/reports/YYYY-MM-DD <topic>.md` (today's date, short
-  kebab-or-plain topic). Then append one line to today's daily note at
+  `~/vaults/work/reports/YYYY-MM-DD-<topic>.md` (today's date, short
+  kebab topic — hyphen between date and topic, no spaces in the
+  filename). Then append one line to today's daily note at
   `~/vaults/work/daily/YYYY-MM-DD.md`:
-  `- 🤖 [<topic>](<../reports/YYYY-MM-DD <topic>.md>) — <one-line takeaway>`
+  `- 🤖 [<topic>](../reports/YYYY-MM-DD-<topic>.md) — <one-line takeaway>`
   Create the daily note from the template if it doesn't exist yet.
 - **Action items**: if a report or task surfaces todos, add them as
   `- [ ]` lines under the `## To file` section of today's daily note.
